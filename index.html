@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChefAI - Platform Resep Canggih</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍳</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h1 class="logo-text">ChefAI</h1>
+                </div>
+
+                <div class="search-section">
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Cari resep, bahan, atau kategori...">
+                    </div>
+                    <button class="filter-btn" id="filterBtn">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+
+                <div class="header-actions">
+                    <button class="action-btn" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="action-btn" id="bookmarksBtn">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                    <button class="action-btn notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="action-btn" id="profileBtn">
+                        <i class="fas fa-user"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-category="all">Semua Resep</button>
+            <button class="nav-tab" data-category="breakfast">Sarapan</button>
+            <button class="nav-tab" data-category="lunch">Makan Siang</button>
+            <button class="nav-tab" data-category="dinner">Makan Malam</button>
+            <button class="nav-tab" data-category="snack">Camilan</button>
+            <button class="nav-tab" data-category="dessert">Dessert</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-grid">
+                <!-- Left Column -->
+                <div class="left-column">
+                    <!-- Recipe Recommendations -->
+                    <section class="recommendations-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-sparkles"></i> Rekomendasi Untuk Anda</h2>
+                        </div>
+                        <div class="recommendations-grid" id="recommendationsGrid">
+                            <!-- Recommendations will be populated by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- Recipe Grid -->
+                    <section class="recipes-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-utensils"></i> Koleksi Resep</h2>
+                            <div class="view-controls">
+                                <button class="view-btn active" data-view="grid">
+                                    <i class="fas fa-th"></i>
+                                </button>
+                                <button class="view-btn" data-view="list">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="recipes-grid" id="recipesGrid">
+                            <!-- Recipes will be populated by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- Meal Planner -->
+                    <section class="meal-planner-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-calendar-alt"></i> Perencanaan Makan Mingguan</h2>
+                            <button class="btn-primary" id="generateMealPlan">
+                                <i class="fas fa-magic"></i> Generate Otomatis
+                            </button>
+                        </div>
+                        <div class="meal-planner" id="mealPlanner">
+                            <!-- Meal planner will be populated by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- Nutrition Tracker -->
+                    <section class="nutrition-section">
+                        <div class="section-header">
+                            <h2><i class="fas fa-chart-line"></i> Pelacakan Nutrisi Harian</h2>
+                        </div>
+                        <div class="nutrition-tracker" id="nutritionTracker">
+                            <!-- Nutrition tracker will be populated by JavaScript -->
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Column -->
+                <div class="right-column">
+                    <!-- Grocery List -->
+                    <section class="grocery-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-shopping-cart"></i> Daftar Belanja</h3>
+                                <span class="item-count" id="groceryCount">0</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="grocery-controls">
+                                    <button class="btn-secondary" id="addGroceryItem">
+                                        <i class="fas fa-plus"></i> Tambah Item
+                                    </button>
+                                    <button class="btn-outline" id="clearGroceryList">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="grocery-progress">
+                                    <div class="progress-info">
+                                        <span>Progress: <span id="groceryProgress">0/0</span></span>
+                                        <span>Total: <span id="groceryTotal">Rp 0</span></span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="groceryProgressBar"></div>
+                                    </div>
+                                </div>
+                                <div class="grocery-list" id="groceryList">
+                                    <!-- Grocery items will be populated by JavaScript -->
+                                </div>
+                                <div class="grocery-actions">
+                                    <button class="btn-outline" id="printGroceryList">
+                                        <i class="fas fa-print"></i> Cetak
+                                    </button>
+                                    <button class="btn-outline" id="shareGroceryList">
+                                        <i class="fas fa-share"></i> Bagikan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Inventory Manager -->
+                    <section class="inventory-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-warehouse"></i> Manajemen Persediaan</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="inventory-alerts" id="inventoryAlerts">
+                                    <!-- Low stock alerts will appear here -->
+                                </div>
+                                <div class="inventory-list" id="inventoryList">
+                                    <!-- Inventory items will be populated by JavaScript -->
+                                </div>
+                                <button class="btn-primary full-width" id="addInventoryItem">
+                                    <i class="fas fa-plus"></i> Tambah Item Baru
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Recipe Suggestions -->
+                    <section class="suggestions-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-lightbulb"></i> Resep yang Bisa Dibuat</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="suggestions-list" id="suggestionsList">
+                                    <!-- Recipe suggestions will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 ChefAI - Platform Resep Interaktif | Proyek Portofolio Informatika</p>
+                <p>Fitur: AI Recommendations, Meal Planning, Nutrition Tracking, Smart Grocery List, Inventory Management</p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Tentang</a>
+                    <a href="#" class="footer-link">Kontak</a>
+                    <a href="#" class="footer-link">Privacy</a>
+                    <a href="https://github.com/toniariyantoputra/ChefAI" class="footer-link" target="_blank">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <!-- Recipe Detail Modal -->
+    <div class="modal" id="recipeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="recipeModalTitle">Recipe Title</h2>
+                <button class="modal-close" id="closeRecipeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="recipeModalBody">
+                <!-- Recipe details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cooking Mode Modal -->
+    <div class="modal cooking-modal" id="cookingModal">
+        <div class="modal-content">
+            <div class="cooking-header">
+                <div class="cooking-info">
+                    <h2 id="cookingTitle">Recipe Title</h2>
+                    <div class="cooking-progress">
+                        <span id="cookingStepInfo">Langkah 1 dari 5</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="cookingProgressBar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cooking-controls">
+                    <button class="action-btn" id="voiceToggle">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <button class="action-btn" id="closeCookingModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="cooking-body" id="cookingBody">
+                <!-- Cooking steps will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div class="modal" id="filterModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Filter Lanjutan</h2>
+                <button class="modal-close" id="closeFilterModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-section">
+                    <label>Tingkat Kesulitan</label>
+                    <select id="difficultyFilter">
+                        <option value="">Semua</option>
+                        <option value="easy">Mudah</option>
+                        <option value="medium">Sedang</option>
+                        <option value="hard">Sulit</option>
+                    </select>
+                </div>
+                <div class="filter-section">
+                    <label>Waktu Maksimal (menit)</label>
+                    <input type="number" id="timeFilter" placeholder="Contoh: 30">
+                </div>
+                <div class="filter-section">
+                    <label>Kalori Maksimal</label>
+                    <input type="number" id="calorieFilter" placeholder="Contoh: 500">
+                </div>
+                <div class="filter-section">
+                    <label>Preferensi Diet</label>
+                    <div class="checkbox-group" id="dietaryFilters">
+                        <label><input type="checkbox" value="vegetarian"> Vegetarian</label>
+                        <label><input type="checkbox" value="vegan"> Vegan</label>
+                        <label><input type="checkbox" value="gluten-free"> Bebas Gluten</label>
+                        <label><input type="checkbox" value="keto"> Keto</label>
+                        <label><input type="checkbox" value="paleo"> Paleo</label>
+                        <label><input type="checkbox" value="halal"> Halal</label>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn-outline" id="resetFilters">Reset</button>
+                    <button class="btn-primary" id="applyFilters">Terapkan Filter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div class="modal" id="addItemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="addItemModalTitle">Tambah Item</h2>
+                <button class="modal-close" id="closeAddItemModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addItemForm">
+                    <div class="form-group">
+                        <label for="itemName">Nama Item</label>
+                        <input type="text" id="itemName" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itemAmount">Jumlah</label>
+                            <input type="number" id="itemAmount" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="itemUnit">Satuan</label>
+                            <input type="text" id="itemUnit" placeholder="kg, gram, buah">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemCategory">Kategori</label>
+                        <select id="itemCategory">
+                            <option value="vegetables">Sayuran</option>
+                            <option value="fruits">Buah</option>
+                            <option value="meat">Daging</option>
+                            <option value="dairy">Dairy & Telur</option>
+                            <option value="pantry">Pantry</option>
+                            <option value="spices">Bumbu</option>
+                            <option value="grains">Grains</option>
+                            <option value="herbs">Herbs</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="expiryGroup" style="display: none;">
+                        <label for="itemExpiry">Tanggal Kedaluwarsa</label>
+                        <input type="date" id="itemExpiry">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-outline" id="cancelAddItem">Batal</button>
+                        <button type="submit" class="btn-primary">Tambah</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Memuat...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer">
+        <!-- Toast notifications will appear here -->
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
